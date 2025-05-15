@@ -13,6 +13,7 @@ function [norm_obs] = normalize_my_obs(obs)
         pi;
         pi;
         pi;
+        pi;
         50;
         50;
         50;

@@ -2,7 +2,7 @@
 % ip为战斗服务器IP，本机训练为'127.0.0.1'
 % port为战斗服务器端口号，默认为1000
 ip = '10.119.13.38';
-port = '1012';
+port = '1001';
 set_param('rlflight/Send Initial Pack/TCP Send Initial Pack','Host',ip);
 set_param('rlflight/Send Initial Pack/TCP Send Initial Pack','Port',port);
 set_param('rlflight/Training/TCP Send Control Pack','Host',ip);

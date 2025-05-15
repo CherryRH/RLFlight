@@ -18,10 +18,11 @@ function [obs] = get_my_obs(org_obs)
     rel_pos = enemy_pos - my_pos;
     distance = norm(rel_pos);
     
-    % 计算朝向角度差
-    my_yaw = my_info(6);         % 我方偏航角
-    desired_yaw = atan2(rel_pos(2), rel_pos(1)); % 理想偏航角
-    yaw_diff = angleDiff(my_yaw, desired_yaw);
+    % 计算角度差
+    desired_yaw = atan2(rel_pos(2), rel_pos(1));
+    yaw_diff = angleDiff(my_info(6), desired_yaw);
+    desired_pitch = atan2(rel_pos(3), sqrt(rel_pos(1)^2 + rel_pos(2)^2));
+    pitch_diff = angleDiff(my_info(5), desired_pitch);
     
     % 构建观测向量
     obs = [
@@ -33,6 +34,7 @@ function [obs] = get_my_obs(org_obs)
         my_info(5);
         my_info(6);
         yaw_diff;
+        pitch_diff;
         my_info(7);
         my_info(8);
         my_info(9);

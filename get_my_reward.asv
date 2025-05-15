@@ -2,18 +2,12 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     % 计算奖励值，输入为当前轮的obs和上一轮的obs
 
     % 常量
-    % 最大距离
     MAX_DISTANCE = 100;
-    % 理想攻击距离
     IDEAL_DISTANCE = 30;
-    % 最小速度
     MIN_SPEED = 4;
-    % 最大速度
-    MAX_SPEED = 10;
-    % 严重旋转阈值
     ROTATION_THRESHOLD = pi/2;
     
-    % 距离变化奖励
+    % 距离奖励
     current_distance = obs(4);
     prev_distance = pre_obs(4);
     distance_change = prev_distance - current_distance;
@@ -23,17 +17,13 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
         distance_change_reward = distance_change * 1;
     end
     
-    % 绝对距离奖励
-    distance_bonus = 0;
     if current_distance <= IDEAL_DISTANCE
         distance_bonus = (IDEAL_DISTANCE - current_distance) * 0.1 + 2;
-    elseif current_distance > MAX_DISTANCE
-        distance_bonus = -100;
     else
         distance_bonus = -1;
     end
     
-    % 角度对准奖励
+    % 角度奖励
     yaw_diff = obs(8);
     pitch_diff = obs(9);
     alignment_reward = 0;
@@ -41,17 +31,16 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
         alignment_reward = 1;
     end
 
-    % 旋转惩罚
     angle_penalty = (abs(yaw_diff) + abs(pitch_diff)) * 0.5;
     rotation_penalty = 0;
     if abs(yaw_diff) > ROTATION_THRESHOLD || abs(pitch_diff) > ROTATION_THRESHOLD
-        rotation_penalty = (abs(yaw_diff) + abs(pitch_diff)) * 1.0;
+        rotation_penalty = 2 * (abs(yaw_diff) + abs(pitch_diff));
     end
     
     % 速度奖励
     speed = norm(obs(10:12));
     if speed > MIN_SPEED
-        speed_reward = min(speed, MAX_SPEED) * 0.5;
+        speed_reward = min(speed, 10) * 0.5;
     else
         speed_reward = -(MIN_SPEED - speed) * 2.0;
     end
