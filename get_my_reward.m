@@ -10,7 +10,7 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     
     % 距离奖励
     dist_change = prev_dist - current_dist;
-    reward_dist = dist_change * 1.0;
+    reward_dist = dist_change * 2.0;
     
     % 方位角奖励
     AAy = obs(7); % 方位角水平分量
@@ -22,12 +22,6 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     reward = reward_dist + reward_yaw + reward_pitch;
     if current_dist < 0.5
         reward = reward * 0.3;
-    end
-
-    % 停滞惩罚
-    speed = norm(obs(4:6));
-    if speed < 0.2 && current_dist > 0.3
-        reward = reward - 0.5;
     end
 
     % 生命值变化奖励
