@@ -8,45 +8,52 @@ function [obs] = get_my_obs(org_obs)
     % TODO:将高维的原始观察数据降维，并根据降维后的观察数据设计reward
     % 注：matlab的数组下标从1开始
 
-    my_info = org_obs(1:13);    % 我方飞机信息
-    enemy_info = org_obs(14:26); % 敌方飞机信息
-    
-    my_pos = my_info(1:3);       % 我方位置 (x,y,z)
-    enemy_pos = enemy_info(1:3);  % 敌方位置 (x,y,z)
+    % 提取双方信息
+    my_info = org_obs(1:13);
+    enemy_info = org_obs(14:26);
     
     % 计算相对位置和距离
-    rel_pos = enemy_pos - my_pos;
-    distance = norm(rel_pos);
+    rel_pos = enemy_info(1:3) - my_info(1:3);
+    xr = rel_pos(1);
+    yr = rel_pos(2);
+    zr = rel_pos(3);
     
-    % 计算角度差
-    desired_yaw = atan2(rel_pos(2), rel_pos(1));
-    yaw_diff = angleDiff(my_info(6), desired_yaw);
-    desired_pitch = atan2(rel_pos(3), sqrt(rel_pos(1)^2 + rel_pos(2)^2));
-    pitch_diff = angleDiff(my_info(5), desired_pitch);
+    % 计算相对速度
+    rel_vel = enemy_info(7:9) - my_info(7:9);
     
-    % 构建观测向量
+    % 计算方位角 (AAy, AAp)
+    AAy = atan2(yr, xr) - my_info(6); % 偏航差
+    AAp = atan2(zr, sqrt(xr^2 + yr^2)) - my_info(5); % 俯仰差
+    
+    % 计算进入角 (ATAy, ATAp)
+    ATAy = atan2(yr, xr); % 敌机对我机的偏航角
+    ATAp = atan2(zr, sqrt(xr^2 + yr^2)); % 敌机对我机的俯仰角
+    
+    % 提取角速度信息 (β0, β1, n0, n1)
+    my_pitch_rate = my_info(11);   % β0
+    enemy_pitch_rate = enemy_info(11); % β1
+    my_yaw_rate = my_info(12);    % n0
+    enemy_yaw_rate = enemy_info(12); % n1
+    
+    % 生命值差值 (h0)
+    hp_diff = my_info(13) - enemy_info(13);
+    
+    % 构建原始观察量向量
     obs = [
-        rel_pos(1);
-        rel_pos(2);
-        rel_pos(3);
-        distance;
-        my_info(4);
-        my_info(5);
-        my_info(6);
-        yaw_diff;
-        pitch_diff;
-        my_info(7);
-        my_info(8);
-        my_info(9);
-        my_info(10);
-        my_info(11);
-        my_info(12);
-        my_info(13);
-        enemy_info(13);
+        xr;
+        yr;
+        zr;
+        rel_vel(1);
+        rel_vel(2);
+        rel_vel(3);
+        AAy;
+        ATAy;
+        AAp;
+        ATAp;
+        my_pitch_rate;
+        enemy_pitch_rate;
+        my_yaw_rate;
+        enemy_yaw_rate;
+        hp_diff;
     ];
-end
-
-% 计算角度差（-pi到pi之间）
-function diff = angleDiff(a, b)
-    diff = mod(b - a + pi, 2*pi) - pi;
 end
