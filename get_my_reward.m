@@ -41,8 +41,8 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     current_hp_diff = obs(15);
     prev_hp_diff = pre_obs(15);
     hp_change = current_hp_diff - prev_hp_diff;
-    reward = reward + hp_change * 1000;
+    reward = reward + hp_change * 300;
 
     % 时间惩罚
-    reward = reward - 0.1;
+    reward = reward - 0.01;
 end

@@ -19,7 +19,7 @@ function [norm_obs] = normalize_my_obs(obs)
         -pi/6, pi/6;     % 12: β1
         -pi/6, pi/6;     % 13: n0
         -pi/6, pi/6;     % 14: n1
-        -1000, 1000;     % 15: h0
+        -1, 1;     % 15: h0
     ];
     
     % 线性归一化
