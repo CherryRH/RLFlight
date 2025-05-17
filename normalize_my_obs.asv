@@ -27,6 +27,7 @@ function [norm_obs] = normalize_my_obs(obs)
     for i = 1:length(obs)
         obs_min = ranges(i,1);
         obs_max = ranges(i,2);
-        norm_obs(i) = 2*(raw_obs(i)-obs_min)/(obs_max-obs_min) - 1;
+        norm = 2*(obs(i)-obs_min)/(obs_max-obs_min) - 1;
+        norm_obs(i) = min(1, max(-1, norm));
     end
 end
