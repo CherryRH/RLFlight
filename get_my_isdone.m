@@ -13,11 +13,11 @@ function [isdone] = get_my_isdone(org_obs)
         return;
     end
     
-    % 检查是否超出最大距离
+    % 检查距离是否过远
     my_pos = org_obs(1:3);
     enemy_pos = org_obs(14:16);
     distance = norm(enemy_pos - my_pos);
-    if distance > 100
+    if distance > 200
         isdone = 1;
         return;
     end

@@ -10,7 +10,7 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     
     % 距离奖励
     dist_change = prev_dist - current_dist;
-    reward_dist = dist_change * 2.0;
+    reward_dist = dist_change * 10.0;
     
     % 方位角奖励
     AAy = obs(7); % 方位角水平分量
@@ -20,8 +20,16 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     
     % 组合战机接近奖励
     reward = reward_dist + reward_yaw + reward_pitch;
-    if current_dist < 0.5
-        reward = reward * 0.3;
+
+    % 距离阶段奖励
+    persistent last_distance_zone
+    if isempty(last_distance_zone)
+        last_distance_zone = floor(current_dist * 10);
+    end
+    current_zone = floor(current_dist * 10);
+    if current_zone < last_distance_zone
+        reward = reward + (last_distance_zone - current_zone) * 10;
+        last_distance_zone = current_zone;
     end
 
     % 生命值变化奖励
@@ -32,9 +40,9 @@ function [reward] = get_my_reward(obs, pre_obs, mytime)
     
     % 结束
     if current_hp_diff >= 1000
-        reward = 500;
+        reward = 1000;
     elseif current_hp_diff <= -1000
-        reward = -500;
+        reward = -1000;
     end
 
     % 时间惩罚
